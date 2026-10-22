@@ -1,0 +1,20 @@
+{
+  "jobDefinitionName": "range-atlas-sdm",
+  "type": "container",
+  "platformCapabilities": ["FARGATE"],
+  "containerProperties": {
+    "image": "<account>.dkr.ecr.eu-central-1.amazonaws.com/range-atlas:latest",
+    "command": ["python", "-m", "pipeline.worker", "Ref::species"],
+    "resourceRequirements": [{"type": "VCPU", "value": "2"}, {"type": "MEMORY", "value": "4096"}],
+    "executionRoleArn": "arn:aws:iam::<account>:role/range-atlas-batch-execution",
+    "jobRoleArn": "arn:aws:iam::<account>:role/range-atlas-lake-readwrite",
+    "environment": [
+      {"name": "RANGE_ATLAS_LAKE", "value": "s3://<bucket>/lake"},
+      {"name": "RANGE_ATLAS_CACHE", "value": "/tmp/cache"}
+    ],
+    "networkConfiguration": {"assignPublicIp": "ENABLED"},
+    "logConfiguration": {"logDriver": "awslogs"}
+  },
+  "retryStrategy": {"attempts": 2},
+  "timeout": {"attemptDurationSeconds": 1800}
+}

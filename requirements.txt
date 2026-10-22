@@ -1,0 +1,18 @@
+# pipeline
+duckdb==2.0.0
+pyarrow==26.0.0
+pandas==3.1.0
+numpy==2.5.4
+dask[dataframe]==2026.8.0
+scikit-learn==1.9.1
+rasterio==1.5.2
+requests==2.34.2
+fsspec==2026.9.0
+s3fs==2026.9.0
+mapbox-vector-tile==2.2.0
+pillow==13.0.0
+# api
+fastapi==0.161.1
+uvicorn==0.54.0
+psycopg[binary]==3.3.6
+boto3==1.43.106

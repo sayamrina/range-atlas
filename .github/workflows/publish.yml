@@ -1,0 +1,55 @@
+# Weekly: harvest fresh records, refit every model, rebuild the static site and publish it to GitHub Pages.
+name: harvest-model-publish
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "23 4 * * 1"   # every Monday
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Climate layers (cached between runs)
+        uses: actions/cache@v4
+        with:
+          path: data/cache
+          key: worldclim-10m-v1
+      - run: pip install -r requirements-dev.txt
+      - name: Tests
+        run: pytest
+      - name: Harvest, check, model and export
+        run: python -m pipeline.run_all
+      - name: Build the web app
+        working-directory: web
+        env:
+          VITE_BASE: /range-atlas/
+        run: npm ci && npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
