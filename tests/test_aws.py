@@ -42,7 +42,10 @@ def test_lakehouse_on_s3_reads_with_duckdb_and_dask(s3_lake, grid, monkeypatch):
 
 
 @mock_aws(config={"batch": {"use_docker": False}})
-def test_aws_batch_runner_submits_and_tracks_a_job(monkeypatch):
+def test_aws_batch_runner_submits_and_tracks_a_job(lake_dir, monkeypatch):
+    # the worker writes its result to the lake; here we write the one a finished job would leave behind
+    lake.write_json({"presence_cells": 80, "background_cells": 400, "seconds": 3.0, "metrics": {"glm": {"auc": 0.7}},
+                     "importance": {}, "response": {}}, "models/species=tetrix-subulata/result.json")
     iam = boto3.client("iam", region_name="eu-central-1")
     role = iam.create_role(RoleName="batch", AssumeRolePolicyDocument=json.dumps({"Version": "2012-10-17", "Statement": []}))
     ec2 = boto3.client("ec2", region_name="eu-central-1")
