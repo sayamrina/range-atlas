@@ -84,7 +84,7 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .label[aria-pressed="true"] .pin { background: var(--pin); border-color: var(--pin); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pin) 25%, transparent); }
 
 .stage { position: relative; min-height: 0; }
-.map { position: absolute; inset: 0; background: var(--paper); }
+.stage .map { position: absolute; inset: 0; background: var(--paper); } /* beats .maplibregl-map, which loads later with the map page */
 .controls { position: absolute; z-index: 2; top: 12px; left: 12px; display: flex; flex-wrap: wrap; align-items: end; gap: 10px 16px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; max-width: calc(100% - 70px); }
 .controls label { display: grid; gap: 3px; font-size: 13px; color: var(--ink-2); }
 .controls select { font-size: 15px; color: var(--ink); padding: 6px 8px; border: 1px solid var(--rule); border-radius: 4px; background: var(--paper); max-width: 300px; }
