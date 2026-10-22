@@ -76,4 +76,4 @@ def run() -> dict:
         else:
             r["failed"][outcome] = n
     lake.write_json(list(report.values()), "clean/_quality.json")
-    return {"records_raw": sum(r["harvested"] for r in report.values()), "records_clean": int(len(clean))}
+    return {"records_checked": sum(r["harvested"] for r in report.values()), "records_passed": int(len(clean))}

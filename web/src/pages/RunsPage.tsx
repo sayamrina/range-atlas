@@ -9,11 +9,16 @@ const STEP_NOTES: Record<string, string> = {
   export: "Vector tiles, map overlays and data files written for this site",
 };
 
+// {"records_passed": 39510, "median_auc_rf": 0.68} -> "39,510 records passed, median AUC RF 0.68"
 function outputText(o?: Record<string, unknown>) {
   if (!o) return "";
   return Object.entries(o)
     .filter(([, v]) => typeof v === "number")
-    .map(([k, v]) => `${(v as number).toLocaleString("en-GB")} ${k.replace(/_/g, " ")}`)
+    .map(([k, v]) => {
+      const n = (v as number).toLocaleString("en-GB");
+      const auc = k.match(/^median_auc_(\w+)$/);
+      return auc ? `median AUC ${auc[1] === "rf" ? "Random Forest" : auc[1].toUpperCase()} ${n}` : `${n} ${k.replace(/_/g, " ")}`;
+    })
     .join(", ");
 }
 
@@ -43,7 +48,7 @@ function PipelineHistory() {
                       <b>{s.name[0].toUpperCase() + s.name.slice(1)}</b>
                       <span>{s.seconds < 60 ? `${s.seconds} s` : `${(s.seconds / 60).toFixed(1)} min`}</span>
                     </div>
-                    <p>{STEP_NOTES[s.name]}{s.output && `: ${outputText(s.output)}`}</p>
+                    <p>{STEP_NOTES[s.name]}{outputText(s.output) && `: ${outputText(s.output)}`}</p>
                     {s.error && <p className="error">{s.error}</p>}
                     <span className="bar" style={{ width: `${Math.max(1, (s.seconds / total) * 100)}%` }} aria-hidden="true" />
                   </li>

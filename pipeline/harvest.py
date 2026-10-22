@@ -156,4 +156,5 @@ def run() -> dict:
     lake.write_partition(normalise(bg), "raw", "gbif", "orthoptera-background")
     counts["orthoptera-background"] = len(bg)
     lake.write_json({"harvested": date.today().isoformat(), "counts": counts}, "raw/_harvest.json")
-    return counts
+    return {"records_harvested": sum(counts.values()), "species": len(config.SPECIES),
+            "background_records": counts["orthoptera-background"]}

@@ -148,4 +148,7 @@ def run_species(slug: str, grid: climate.Grid | None = None) -> dict:
 
 def run() -> dict:
     grid = climate.load()
-    return {sp.slug: run_species(sp.slug, grid)["metrics"] for sp in config.SPECIES if sp.model}
+    metrics = [run_species(sp.slug, grid)["metrics"] for sp in config.SPECIES if sp.model]
+    return {"species_modelled": len(metrics),
+            "median_auc_glm": round(float(np.median([m["glm"]["auc"] for m in metrics])), 3),
+            "median_auc_rf": round(float(np.median([m["rf"]["auc"] for m in metrics])), 3)}

@@ -53,7 +53,7 @@ def test_quality_checks_flag_bad_records_and_repair_status(lake_dir):
     lake.write_partition(harvest.normalise(pd.DataFrame(rows)), "raw", "gbif", "x")
     out = clean.run()
     report = lake.read_json("clean/_quality.json")[0]
-    assert out == {"records_raw": 8, "records_clean": 2}
+    assert out == {"records_checked": 8, "records_passed": 2}
     assert report["failed"] == {"duplicate": 1, "outside_study_area": 1, "imprecise_coordinates": 1,
                                 "flagged_by_source": 1, "outside_time_window": 1, "recorded_absence": 1}
     assert report["repaired"] == {"occurrenceStatus": 1}
@@ -63,7 +63,7 @@ def test_features_thin_to_one_record_per_cell(raw_lake, grid):
     clean.run()
     out = features.run(scheduler="sync")
     df = lake.connect().sql(f"SELECT * FROM read_parquet('{lake.glob('features')}', hive_partitioning = true)").df()
-    assert out["cells_after_thinning"] == len(df)
+    assert out["grid_cells_after_thinning"] == len(df)
     assert not df.duplicated(["species", "cell"]).any()
     assert df[list(config.PREDICTORS)].notna().all().all()
 

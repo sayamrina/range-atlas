@@ -35,5 +35,5 @@ def run(scheduler: str = "threads") -> dict:
     for species, part in thinned.groupby("species"):
         lake.write_parquet(part.drop(columns=["source", "species"], errors="ignore"),
                            lake.uri("features", f"species={species}", "part-0.parquet"))
-    return {"records_with_climate": int(len(on_land)), "cells_after_thinning": int(len(thinned)),
-            "dropped_no_climate": int(len(df) - len(on_land))}
+    return {"records_with_climate": int(len(on_land)), "grid_cells_after_thinning": int(len(thinned)),
+            "records_without_climate": int(len(df) - len(on_land))}
